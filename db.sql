@@ -3,8 +3,16 @@ create table transactions(
   parent_id integer,
   amount decimal,
   author varchar,
-  ts date,
+  creation_ts date,
+  deposit_id integer,
   foreign key (parent_id) references transactions(id)
+  foreign key (deposit_id) references deposits(id)
+);
+
+create table deposits(
+  id serial primary key,
+  name varchar,
+  balance decimal
 );
 
 create table tags(
