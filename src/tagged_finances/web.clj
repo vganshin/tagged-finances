@@ -27,6 +27,7 @@
        {:status 200
         :headers {"Content-Type" "text/plain"}
         :body (pr-str ["Hello again" :from 'Heroku])})
+  (route/resources "/")
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 
@@ -54,3 +55,10 @@
 ;; For interactive development:
 ;; (.stop server)
 ;; (def server (-main))
+(comment
+  (defn restart []
+    (.stop server)
+    (def server (-main)))
+
+  (restart)
+  )
