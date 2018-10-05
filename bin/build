@@ -2,12 +2,10 @@
 
 set -ex
 
-cd frontend
-npm build
-cd ..
+# cd frontend
+# npm build
+# cd ..
 
-cp -R frontend/dist/frontend/ resources/public/
+# cp -R frontend/dist/frontend/ resources/public/
 
 lein uberjar
-
-echo done
