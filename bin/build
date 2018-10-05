@@ -2,10 +2,8 @@
 
 set -ex
 
-# cd frontend
-# npm build
-# cd ..
+npm install --only=dev
 
-# cp -R frontend/dist/frontend/ resources/public/
+ng build --aot --prod
 
 lein uberjar
