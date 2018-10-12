@@ -1,0 +1,34 @@
+<div class="container">
+  <form [formGroup]="transactionForm" (submit)="onSubmit()">
+      <div class="row">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="First name" formControlName="name">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Last name" formControlName="name1">
+        </div>
+      </div>
+
+    <div formArrayName="items"
+         *ngFor="let item of transactionForm.controls['items']['controls']; let i = index;">
+      <div class="row" [formGroupName]="i">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="-" formControlName="name">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="-" formControlName="description">
+        </div>
+      </div>
+      Chosen name: {{ transactionForm.controls['items'].controls[i].controls.name.value }}
+    </div>
+
+    <button type="button" class="btn btn-success" (click)="addItem()">+</button>
+
+    <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid">Submit</button>
+  </form>
+
+  <div>
+    {{transactionForm.value | json}}
+  </div>
+</div>
+

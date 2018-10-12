@@ -1,0 +1,16 @@
+#navigation {
+  display: table;
+  background-color: #7f8280;
+  padding: 20px;
+  border-radius: 20px;
+  margin: 0 auto;
+}
+
+.box{
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  margin-bottom: 20px;
+  padding: 10px;
+
+}

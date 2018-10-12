@@ -1,0 +1,45 @@
+<h1> Deposits</h1>
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Name</th>
+    <th scope="col">Balance</th>
+  </tr>
+  </thead>
+  <tbody *ngFor="let deposit of deposits; index as i;">
+  <tr>
+    <th scope="row">{{i}}</th>
+    <td>{{deposit.name}}</td>
+    <td [ngSwitch]="deposit.edit" (click)="deposit.edit = true">
+      <span *ngSwitchCase=false> {{deposit.balance}}</span>
+      <div *ngSwitchCase=true class="input-group">
+        <input (change)="deposit.balance = $event.target.value;" value={{deposit.balance}} type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <button (click)="deposit.edit = false; $event.stopPropagation();" class="btn btn-outline-success" type="button">Save</button>
+          <button (click)="deposit.edit = false; $event.stopPropagation();" class="btn btn-outline-secondary" type="button">Cancel</button>
+        </div>
+      </div>
+    </td>
+
+  </tr>
+  </tbody>
+</table>
+
+<form [formGroup]="newDepositForm" (submit)="onSubmit()" *ngIf="newDepositFormVisible === true" >
+  <div class="form-group form-row">
+    <div class="col">
+      <input type="text" class="form-control" placeholder="Deposit name" formControlName="name">
+    </div>
+    <div class="col">
+      <input type="number" class="form-control" placeholder="Current balance" formControlName="balance">
+    </div>
+  </div>
+  <div class=" form-row">
+    <button type="submit" class="btn btn-success" [disabled]="newDepositForm.invalid">Save</button>
+    <button type="button" class="btn btn-secondary" (click)="hideForm()">Cancel</button>
+  </div>
+
+</form>
+
+<button type="button" class="btn btn-success" (click)="addItem()" *ngIf="newDepositFormVisible === false">Add deposit</button>
