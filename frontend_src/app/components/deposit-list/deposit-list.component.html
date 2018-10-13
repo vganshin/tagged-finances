@@ -7,26 +7,34 @@
     <th scope="col">Balance</th>
   </tr>
   </thead>
-  <tbody *ngFor="let deposit of deposits; index as i;">
+  <tbody *ngFor="let depositRow of depositRows; index as i;">
   <tr>
     <th scope="row">{{i}}</th>
-    <td>{{deposit.name}}</td>
-    <td [ngSwitch]="deposit.edit" (click)="deposit.edit = true">
-      <span *ngSwitchCase=false> {{deposit.balance}}</span>
-      <div *ngSwitchCase=true class="input-group">
-        <input (change)="deposit.balance = $event.target.value;" value={{deposit.balance}} type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+    <td>{{depositRow.getName()}}</td>
+    <td [ngSwitch]="depositRow.edit" (click)="depositRow.edit = true">
+
+      <span *ngSwitchCase=false>
+        {{depositRow.getBalance()}}
+      </span>
+
+      <div  *ngSwitchCase=true class="input-group">
+        <input (change)="depositRow.newBalance = $event.target.value;"
+               value={{depositRow.getBalance()}}
+               type="text" class="form-control">
         <div class="input-group-append">
-          <button (click)="deposit.edit = false; $event.stopPropagation();" class="btn btn-outline-success" type="button">Save</button>
-          <button (click)="deposit.edit = false; $event.stopPropagation();" class="btn btn-outline-secondary" type="button">Cancel</button>
+          <button (click)="updateDeposit(depositRow); $event.stopPropagation();"
+                  class="btn btn-outline-success" type="button">Save</button>
+          <button (click)="depositRow.reset(); $event.stopPropagation();"
+                  class="btn btn-outline-secondary" type="button">Cancel</button>
         </div>
       </div>
-    </td>
 
+    </td>
   </tr>
   </tbody>
 </table>
 
-<form [formGroup]="newDepositForm" (submit)="onSubmit()" *ngIf="newDepositFormVisible === true" >
+<form [formGroup]="newDepositForm" (submit)="saveNewDeposit()" *ngIf="isFormVisible()" >
   <div class="form-group form-row">
     <div class="col">
       <input type="text" class="form-control" placeholder="Deposit name" formControlName="name">
@@ -35,11 +43,10 @@
       <input type="number" class="form-control" placeholder="Current balance" formControlName="balance">
     </div>
   </div>
-  <div class=" form-row">
+  <div class="form-row">
     <button type="submit" class="btn btn-success" [disabled]="newDepositForm.invalid">Save</button>
     <button type="button" class="btn btn-secondary" (click)="hideForm()">Cancel</button>
   </div>
-
 </form>
 
-<button type="button" class="btn btn-success" (click)="addItem()" *ngIf="newDepositFormVisible === false">Add deposit</button>
+<button type="button" class="btn btn-success" (click)="showForm()" *ngIf="!isFormVisible()">Add deposit</button>

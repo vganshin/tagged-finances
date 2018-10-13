@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "cash",
+    "balance": 2000
+  },
+  {
+    "id": 2,
+    "name": "bank",
+    "balance": 5000
+  },
+  {
+    "id": 3,
+    "name": "pod matrasom",
+    "balance": 150000
+  }
+]

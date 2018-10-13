@@ -11,7 +11,7 @@
   <tbody *ngFor="let transaction of transactions | filterByDeposit:forDeposit; index as i;">
   <tr>
     <th scope="row">{{i}}</th>
-    <td>{{transaction.deposit}}</td>
+    <td>{{transaction.depositName}}</td>
     <td>{{transaction.tags}}</td>
     <td>{{transaction.amount}}</td>
   </tr>
@@ -19,11 +19,11 @@
 </table>
 
 
-<form [formGroup]="newTransactionForm" (submit)="onSubmit()" *ngIf="formVisible === true" >
+<form [formGroup]="newTransactionForm" (submit)="onSubmit()" *ngIf="isFormVisible()" >
 
   <div class="form-group">
     <select formControlName="deposit" class="form-control" >
-      <option *ngFor="let deposit of deposits; index as i;">{{deposit}}</option>
+      <option *ngFor="let deposit of deposits; index as i;" [ngValue]="deposit">{{deposit.name}}</option>
     </select>
   </div>
   <div class="form-group">
@@ -39,5 +39,5 @@
 
 </form>
 
-<button type="button" class="btn btn-success" (click)="addItem()" *ngIf="formVisible === false">Add deposit</button>
+<button type="button" class="btn btn-success" (click)="showForm()" *ngIf="!isFormVisible()">Add transaction</button>
 

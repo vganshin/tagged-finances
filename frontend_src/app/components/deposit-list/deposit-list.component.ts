@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators, FormArray} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Deposit} from '../../model/deposit.model';
+import {BackendService} from '../../services/backend.service';
+import {DepositRow} from '../../model/deposit-row.model';
 
 @Component({
   selector: 'app-deposit-list',
@@ -9,25 +12,20 @@ import {FormBuilder, FormGroup, Validators, FormArray} from '@angular/forms';
 export class DepositListComponent implements OnInit {
 
   newDepositForm: FormGroup;
-
-  constructor(private fb: FormBuilder) { }
-
   newDepositFormVisible: boolean;
 
-  deposits = [
-    {
-      'name': 'cash',
-      'balance' : 200,
-      'edit' : false
-    },
-    {
-      'name': 'bank',
-      'balance': 800,
-      'edit' : false
-    }
-    ];
+  depositRows: DepositRow[];
+
+  constructor(private fb: FormBuilder, private backendService: BackendService) { }
 
   ngOnInit() {
+
+    this.setupForm();
+
+    this.backendService.getDeposits().subscribe((deposits: Deposit[]) => this.setDeposits(deposits));
+  }
+
+  setupForm() {
     this.newDepositForm = this.fb.group({
       name: ['', [
         Validators.required,
@@ -44,19 +42,27 @@ export class DepositListComponent implements OnInit {
     this.newDepositFormVisible = false;
   }
 
-  onSubmit() {
+  setDeposits(deposits: Deposit[]) {
 
-    this.deposits.push(
-      {
-        'name': this.newDepositForm.controls.name.value,
-        'balance': this.newDepositForm.controls.balance.value,
-        'edit': false
-      });
+    this.depositRows = deposits.map(deposit => {
+      return new DepositRow(deposit);
+    });
+
+  }
+
+  updateDeposit(depositRow: DepositRow) {
+    depositRow.deposit.balance = depositRow.newBalance;
+    depositRow.edit = false;
+  }
+
+  saveNewDeposit() {
+    const controls = this.newDepositForm.controls;
+    this.depositRows.push(new DepositRow(new Deposit(controls.name.value, controls.balance.value)));
 
     this.hideForm();
   }
 
-  addItem() {
+  showForm() {
     this.newDepositFormVisible = true;
   }
 
@@ -64,6 +70,10 @@ export class DepositListComponent implements OnInit {
     this.newDepositFormVisible = false;
     this.newDepositForm.controls.name.setValue('');
     this.newDepositForm.controls.balance.setValue(0);
+  }
+
+  isFormVisible(): boolean {
+    return this.newDepositFormVisible;
   }
 
 }

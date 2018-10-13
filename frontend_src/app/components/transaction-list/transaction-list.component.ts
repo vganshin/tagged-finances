@@ -1,5 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, FormArray} from '@angular/forms';
+import {Transaction} from '../../model/transaction.model';
+import {Deposit} from '../../model/deposit.model';
+import {BackendService} from '../../services/backend.service';
 
 @Component({
   selector: 'app-transaction-list',
@@ -8,34 +11,29 @@ import {FormBuilder, FormGroup, Validators, FormArray} from '@angular/forms';
 })
 export class TransactionListComponent implements OnInit {
 
+  @Input() forDeposit: string;
+
   newTransactionForm: FormGroup;
   formVisible: boolean;
 
-  @Input() forDeposit: string;
+  deposits: Deposit[];
+  transactions: Transaction[];
 
-  deposits = [ 'bank', 'cash', 'bank 2'];
-
-  transactions = [
-    {
-      'deposit': 'cash',
-      'tags' : 'tag1, tag2',
-      'amount' : 3000
-    },
-    {
-      'deposit': 'bank',
-      'tags': 'tag3',
-      'amount' : 2000
-    },
-    {
-      'deposit': 'bank',
-      'tags': 'tag2',
-      'amount' : 1000
-    }
-  ];
-
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder,
+              private backendService: BackendService) { }
 
   ngOnInit() {
+
+    this.setupForm();
+
+    this.backendService.getDeposits()
+      .subscribe((deposits: Deposit[]) => this.deposits = deposits);
+    this.backendService.getTransactions()
+      .subscribe((transactions: Transaction[]) => this.transactions = transactions);
+
+  }
+
+  setupForm() {
     this.newTransactionForm = this.fb.group({
       deposit: ['', [
         Validators.required,
@@ -46,8 +44,8 @@ export class TransactionListComponent implements OnInit {
         Validators.pattern(/[\wА-я]/)
       ]],
       amount: ['', [
-      Validators.required,
-      Validators.pattern(/[0-9]+/)
+        Validators.required,
+        Validators.pattern(/[0-9]+/)
       ]]
     });
 
@@ -57,15 +55,16 @@ export class TransactionListComponent implements OnInit {
   onSubmit() {
     this.transactions.push(
       {
-        'deposit': this.newTransactionForm.controls.deposit.value,
-        'tags': this.newTransactionForm.controls.tags.value,
+        'id': 123,
+        'depositName': this.newTransactionForm.controls.deposit.value.name,
+        'tags': this.newTransactionForm.controls.tags.value.split(','),
         'amount': this.newTransactionForm.controls.amount.value
       });
 
     this.hideForm();
   }
 
-  addItem() {
+  showForm() {
     this.formVisible = true;
   }
 
@@ -74,7 +73,10 @@ export class TransactionListComponent implements OnInit {
     this.newTransactionForm.controls.deposit.setValue('');
     this.newTransactionForm.controls.tags.setValue('');
     this.newTransactionForm.controls.amount.setValue(0);
+  }
 
+  isFormVisible(): boolean {
+    return this.formVisible;
   }
 
 }
