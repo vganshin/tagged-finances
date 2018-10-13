@@ -1,0 +1,30 @@
+GET /api/transactions
+[
+    {
+        "id": 1,
+        "parent_id": 3,
+        "amount": 444.56,
+        "author": "Nikita",
+        "creation-ts":"2018-09-10"
+
+    }
+]
+
+POST /api/transactions&parent_id=1&amount=333.23&author="Nikita"&deposit_id=2
+
+
+
+Host localhost
+Path /api/deposits?name =dasda
+Content-Lenght 50
+
+{
+    "name": "wow",
+
+}
+
+
+get nhfypfrwbb b ltgjbpnjd
+post jlyjq nhfpyfwbb b ltgjb[njd
+put j,yjdktybz b delete
+]
