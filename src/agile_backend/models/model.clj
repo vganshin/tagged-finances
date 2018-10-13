@@ -5,8 +5,7 @@
             [clojure.string :as str]
             [clj-time.coerce :as c]
             [clj-time.format :as f]
-            [clj-time.core :as t]
-            ))
+            [clj-time.core :as t]))
 
 (def db {:dbtype "postgresql"
          :dbname "agile_backend"
@@ -31,38 +30,30 @@
                ["id = ?" id]))
 
 (defn delete-deposit [id]
-  (sql/delete! db :deposits ["id = ?", id]))
-
-
-  (defn create-transaction [params]
-    (sql/insert! db :transactions {:deposit_id (let [deposit  (get params "deposit")] deposit)
-                               :amount (let [amount  (get params "amount")] amount)
-                               :creation_ts (let [creation_ts  (get params "date")] (c/to-sql-date creation_ts))
-                               }))
-   (defn check-tag[tag]
-    (sql/execute! 
-      db 
-      ["insert into tags(name) select (?) from tags where not exists(select 1 from tags where name=(?));"  tag]  
-      {:multi? false} ))
+  (sql/delete! db :deposits ["id = ?", id])) (defn create-transaction [params]
+                                               (sql/insert! db :transactions {:deposit_id (let [deposit  (get params "deposit")] deposit)
+                                                                              :amount (let [amount  (get params "amount")] amount)
+                                                                              :creation_ts (let [creation_ts  (get params "date")] (c/to-sql-date creation_ts))}))
+(defn check-tag [tag]
+  (sql/execute!
+   db
+   ["insert into tags(name) select (?) from tags where not exists(select 1 from tags where name=(?));"  tag]
+   {:multi? false}))
 ;  name уникальный ключ
 ;insert into tags(name) values('tag7') on confict do nothing; уникальный ключ
-    
+(defn create-tag-transaction [id params]
+  (def tags (apply list (get params "tags")))
 
+  (for [item tags] (apply str (check-tag item))))
 
-  (defn create-tag-transaction[id params]
-    (def tags (apply list (get params "tags")))
-    
-    (for [item tags] (apply str(check-tag item)))
-    )
+(defn create-trans [params]
 
-   (defn create-trans[params]
-
-    (def id (apply str(map :id (create-transaction params))))
+  (def id (apply str (map :id (create-transaction params))))
     ; (str id) 
-    (create-tag-transaction id params)
-    
+  (create-tag-transaction id params)
+
     ; (create-tag-transaction)
-    
+
 ; ({:id 32, :parent_id nil, :amount 4.2M, :author nil, :creation_ts nil, :deposit_id 1})
 )
 
@@ -75,11 +66,6 @@
 
 ; (defn select-transactions-by-parent [parent]
 ;   (sql/query db ["SELECT * FROM transactions WHERE parent = ?", parent]))
-
-
-
-
-
 
 
 ; (defn select-transactions-by-deposit [deposit]
@@ -114,7 +100,6 @@
 
 ; (defn delete-tag [id]
 ;   (sql/delete! db :tags ["id = ?", id]))
-
 
 
 ; ; (defn create-transaction[])

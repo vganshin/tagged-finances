@@ -1,1 +1,1 @@
-web: java $JVM_OPTS -jar target/agile-backend-standalone.jar
+web: java $JVM_OPTS -jar target/tagged-finances-standalone.jar

@@ -5,27 +5,23 @@
             [ring.util.response :refer [response]]
             [ring.middleware.json :as middleware]
             [compojure.route :as route]
+            [clojure.java.io :as io]
             [clojure.data.json :as json]
             [agile_backend.models.model :as model]))
-          
 
-    (def migratus-config
-              {:store :database
-               :migration-dir "migrations"
-               :db  {:subprotocol "postgresql" 
-                             :subname "//localhost:5433/agile_backend" 
-                             :user "admin" 
-                             :password ""}})
+(def migratus-config
+  {:store :database
+   :migration-dir "migrations"
+   :db  {:subprotocol "postgresql"
+         :subname "//localhost:5432/agile_backend"
+         :user "postgres"
+         :password ""}})
 
-      (defroutes app-routes
-        (context "/api/deposits" [] (defroutes deposits-routes
-
-
-           ;get query fetch result of all deposits
-          (GET "/" [] response(model/select-deposit))
-
-
-          ;post query creates new deposit based on name and balance written in json raw data.
+(defroutes app-routes
+  (route/resources "/")
+  (context "/api/deposits" []
+    (defroutes deposits-routes;get query fetch result of all deposits
+      (GET "/" [] response (model/select-deposit));post query creates new deposit based on name and balance written in json raw data.
           ; response is inserted data
           ;example of input raw json data to backend
           ; {
@@ -34,18 +30,10 @@
           ;     "balance": 5.22
           ;   }
           ; }
+      (POST "/" {body :body} (model/create-deposit (json/read-str (slurp body))));  PUT and DELETE queries need id of deposit
 
-
-         (POST "/" {body :body} (model/create-deposit (json/read-str(slurp body))))
-
-
-        ;  PUT and DELETE queries need id of deposit
-
-
-         (context "/:id" [id] (defroutes document-routes
-
-
-        ; PUT query update deposit with selected id based on name and balance written in json raw data
+      (context "/:id" [id]
+        (defroutes document-routes; PUT query update deposit with selected id based on name and balance written in json raw data
         ; response is 1
         ;example of input raw json data to backend
           ; {
@@ -56,32 +44,23 @@
           ; }
 
 
-        (PUT "/" {body :body} (model/update-deposit (read-string id) (json/read-str(slurp body))))
+          (PUT "/" {body :body} (model/update-deposit (read-string id) (json/read-str (slurp body)))); delete query delete query with id. response is 1
 
 
-      ; delete query delete query with id. response is 1
-
-       
-        (DELETE "/"[] (model/delete-deposit (read-string id)))
-
-        ))
-      ))
-      (context "/api/transactions" [] (defroutes transactions-routes
+          (DELETE "/" [] (model/delete-deposit (read-string id)))))))
+  (context "/api/transactions" []
+    (defroutes transactions-routes
 
        ;get query fetch result of all transactions
-       (POST "/" {body :body} (model/create-trans (json/read-str(slurp body))))
+      (POST "/" {body :body} (model/create-trans (json/read-str (slurp body))))))
 
+  (GET "/" [] (slurp (io/resource "public/index.html")))
 
+  (GET "*" [] (slurp (io/resource "public/index.html")))
+  (ANY "*" [] (route/not-found (slurp (io/resource "404.html")))))
 
-
-
-      )
-      )
-      (route/not-found "Not Found")
-      )
-        
         ; (GET "/api/deposits" [] (response (vec(model/select-deposits) )))
-        
+
         ; ; (POST "/api/deposits" [name balance :as request] (model/create-deposit request))
         ; ; (PUT "/api/deposits/update/:id")[id name balance :as request] (model/update-deposit request )
         ; (DELETE "/api/transaction/delete-deposit/:id" [id]
@@ -90,7 +69,7 @@
         ; (GET "/api/transaction/select-transactions-by-deposit"[deposit])
         ; (DELETE "/api/transaction/delete-transaction/:id" [id]
         ;   (response (model/delete-transaction id)))
-        
+
         ; (route/resources "/")
         ; )
 
@@ -113,5 +92,5 @@
       ; middleware/wrap-json-response))
 
 (defn init []
-    (do
-      (migratus/migrate migratus-config)))
+  (do
+    (migratus/migrate migratus-config)))
