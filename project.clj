@@ -8,7 +8,7 @@
                            [org.clojure/data.json "0.2.6"]
                            [compojure "1.6.1"]
                            [hiccup "1.0.5"]
-                           [postgresql/postgresql "9.3-1102.jdbc41"]
+                           [org.postgresql/postgresql "42.2.5"]
                            [org.clojure/java.jdbc "0.7.0"]
                            [lib-noir "0.9.9"]
                            [clj-time "0.14.0"]
@@ -25,9 +25,9 @@
             :migratus {:store :database
                        :migration-dir "migrations"
                        :db  {:subprotocol "postgresql" 
-                       :subname "//localhost:5433/agile_backend?charSet=UTF8" 
+                       :subname "//localhost:5434/agile_backend?charSet=UTF8" 
                        :user "admin" 
-                       :password ""}}
+                       :password "pass"}}
             :ring {:handler agile_backend.handler/app
                    :init agile_backend.handler/init}
             :profiles

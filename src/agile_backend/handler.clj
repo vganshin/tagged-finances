@@ -7,22 +7,21 @@
             [compojure.route :as route]
             [clojure.data.json :as json]
             [agile_backend.models.model :as model]))
-          
 
-    (def migratus-config
-              {:store :database
-               :migration-dir "migrations"
-               :db  {:subprotocol "postgresql" 
-                             :subname "//localhost:5433/agile_backend" 
-                             :user "admin" 
-                             :password ""}})
 
-      (defroutes app-routes
-        (context "/api/deposits" [] (defroutes deposits-routes
+    ; (def migratus-config
+    ;           {:store :database
+    ;            :migration-dir "migrations"
+    ;            :db  {:subprotocol "postgresql" 
+    ;                          :subname "//localhost:5434/agile_backend" 
+    ;                          :user "admin" 
+    ;                          :password "pass"}})
 
+(defroutes app-routes
+  (context "/api/deposits" [] (defroutes deposits-routes
 
            ;get query fetch result of all deposits
-          (GET "/" [] response(model/select-deposit))
+                                (GET "/" [] response (model/select-deposit))
 
 
           ;post query creates new deposit based on name and balance written in json raw data.
@@ -36,13 +35,13 @@
           ; }
 
 
-         (POST "/" {body :body} (model/create-deposit (json/read-str(slurp body))))
+                                (POST "/" {body :body} (model/create-deposit (json/read-str (slurp body))))
 
 
         ;  PUT and DELETE queries need id of deposit
 
 
-         (context "/:id" [id] (defroutes document-routes
+                                (context "/:id" [id] (defroutes document-routes
 
 
         ; PUT query update deposit with selected id based on name and balance written in json raw data
@@ -56,32 +55,27 @@
           ; }
 
 
-        (PUT "/" {body :body} (model/update-deposit (read-string id) (json/read-str(slurp body))))
+                                                       (PUT "/" {body :body} (model/update-deposit (read-string id) (json/read-str (slurp body))))
 
 
       ; delete query delete query with id. response is 1
 
-       
-        (DELETE "/"[] (model/delete-deposit (read-string id)))
 
-        ))
-      ))
-      (context "/api/transactions" [] (defroutes transactions-routes
+                                                       (DELETE "/" [] (model/delete-deposit (read-string id)))))))
+  (context "/api/transactions" [] (defroutes transactions-routes
 
        ;get query fetch result of all transactions
-       (POST "/" {body :body} (model/create-trans (json/read-str(slurp body))))
+;       ; {
+;   "date": "2018-10-10",
+;   "tags": "tag1,tag2,tag3",
+;   "deposit_id": 1,
+;   "amount": 40
+; }
+                                    (POST "/" {body :body} (model/create-transaction (json/read-str (slurp body))))))
+  (route/not-found "Not Found"))
 
-
-
-
-
-      )
-      )
-      (route/not-found "Not Found")
-      )
-        
         ; (GET "/api/deposits" [] (response (vec(model/select-deposits) )))
-        
+
         ; ; (POST "/api/deposits" [name balance :as request] (model/create-deposit request))
         ; ; (PUT "/api/deposits/update/:id")[id name balance :as request] (model/update-deposit request )
         ; (DELETE "/api/transaction/delete-deposit/:id" [id]
@@ -90,7 +84,7 @@
         ; (GET "/api/transaction/select-transactions-by-deposit"[deposit])
         ; (DELETE "/api/transaction/delete-transaction/:id" [id]
         ;   (response (model/delete-transaction id)))
-        
+
         ; (route/resources "/")
         ; )
 
@@ -113,5 +107,6 @@
       ; middleware/wrap-json-response))
 
 (defn init []
-    (do
-      (migratus/migrate migratus-config)))
+  (do
+      ; (migratus/migrate migratus-config)
+   ))
