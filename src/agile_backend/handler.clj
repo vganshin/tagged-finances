@@ -64,15 +64,22 @@
                                                        (DELETE "/" [] (model/delete-deposit (read-string id)))))))
   (context "/api/transactions" [] (defroutes transactions-routes
 
-       ;get query fetch result of all transactions
+       ;get query fetch result of all transactions.example
+
 ;       ; {
 ;   "date": "2018-10-10",
 ;   "tags": "tag1,tag2,tag3",
 ;   "deposit_id": 1,
 ;   "amount": 40
 ; }
-                                    (POST "/" {body :body} (model/create-transaction (json/read-str (slurp body))))))
+                                    (POST "/" {body :body} (model/create-transaction (json/read-str (slurp body))))
+                                    ;get query fetch result of all transactions
+                                    (GET "/" [] response (model/select-transactions))))
   (route/not-found "Not Found"))
+
+
+
+
 
         ; (GET "/api/deposits" [] (response (vec(model/select-deposits) )))
 
