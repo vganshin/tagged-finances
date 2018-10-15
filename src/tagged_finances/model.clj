@@ -2,12 +2,13 @@
   (:require [clojure.java.jdbc :as sql]
             [clojure.data.json :as json]
             [compojure.handler :as handler]
+            [environ.core :refer [env]]
             [clojure.string :as str]
             [clj-time.coerce :as c]
             [clj-time.format :as f]
             [clj-time.core :as t]))
 
-(def db {:connection-uri "jdbc:postgresql://localhost:5432/agile_backend?user=postgres"})
+(def db {:connection-uri (or (env :jdbc-database-url) "jdbc:postgresql://localhost:5432/agile_backend?user=postgres")})
 
     ; getting the current date
 (defn now [] (new java.util.Date))

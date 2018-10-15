@@ -17,6 +17,7 @@
                  [ring/ring-defaults "0.3.1"]
                  [ring/ring-json "0.1.2"]
                  [clj-json "0.2.0"]
+                 [environ "1.1.0"]
                  [ring/ring-jetty-adapter "1.2.2"]
                  [ring/ring-devel "1.2.2"]
                  [ring-basic-authentication "1.0.5"]
