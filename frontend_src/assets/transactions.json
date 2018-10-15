@@ -1,32 +1,37 @@
 [
   {
     "id": 1,
-    "tags": ["tag1", "tag2"],
-    "depositName": "cash",
+    "date": "2018-10-10",
+    "tags": "tag1,ag2,tag3",
+    "deposit_id": 1,
     "amount": 200
   },
   {
     "id": 2,
-    "tags": ["tag1", "tag2", "tag4"],
-    "depositName": "cash",
+    "date": "2018-10-10",
+    "tags": "tag1,ag2",
+    "deposit_id": 2,
     "amount": 40
   },
   {
     "id": 3,
-    "tags": ["tag1"],
-    "depositName": "bank",
+    "date": "2018-10-10",
+    "tags": "tag1,ag2,tag3",
+    "deposit_id": 3,
     "amount": 120
   },
   {
     "id": 4,
-    "tags": ["tag1", "tag2"],
-    "depositName": "bank",
+    "date": "2018-10-10",
+    "tags": "tag1,ag2",
+    "deposit_id": 1,
     "amount": 560
   },
   {
     "id": 5,
-    "tags": ["tag1"],
-    "depositName": "cash",
+    "date": "2018-10-10",
+    "tags": "tag1,ag2,tag6",
+    "deposit_id": 2,
     "amount": 150
   }
 ]
