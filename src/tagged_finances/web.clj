@@ -6,6 +6,7 @@
    [compojure.core :refer :all]
    [compojure.handler :as handler]
    [compojure.route :as route]
+   [compojure.coercions :refer [as-int]]
    [clojure.java.io :as io]
    [ring.middleware.stacktrace :as trace]
    [ring.middleware.session :as session]
@@ -36,10 +37,35 @@
       (session/wrap-session)
       (basic/wrap-basic-authentication authenticated?)))
 
+(defroutes deposits
+  (GET "/" []
+    {:body (json/write-str (model/select-deposit))
+     :headers {"Content-Type" "application/json;charset=utf-8"}})
+  (POST "/" {body :body}
+    {:body (json/write-str (model/create-deposit (json/read-str (slurp body))))
+     :headers {"Content-Type" "application/json;charset=utf-8"}})
+  (PUT "/:id" [id :<< as-int :as {body :body}]
+    {:body (model/update-deposit id (json/read-str (slurp body)))
+     :headers {"Content-Type" "application/json;charset=utf-8"}})
+  (DELETE "/:id" [id :<< as-int] (model/delete-deposit id) {:status 204}))
+
+(defroutes transactions
+  (GET "/" [] "Hello transaction")
+  (POST "/" [] "post-post"))
+
+(defroutes api
+  (context "/deposits" [] deposits)
+  (context "/transactions" [] transactions))
+
 (defroutes app
-  (context "/api/deposits" []
-    (defroutes deposits-routes;get query fetch result of all deposits
-      (GET "/" [] response (model/select-deposit));post query creates new deposit based on name and balance written in json raw data.
+  (context "/api" [] api)
+  (route/resources "/")
+  (GET "*" [] (slurp (io/resource "public/index.html"))))
+
+#_(defroutes app
+    (context "/api/deposits" []
+      (defroutes deposits-routes;get query fetch result of all deposits
+        (GET "/" [] response (json/write-str (model/select-deposit)));post query creates new deposit based on name and balance written in json raw data.
               ; response is inserted data
               ;example of input raw json data to backend
               ; {
@@ -48,10 +74,10 @@
               ;     "balance": 5.22
               ;   }
               ; }
-      (POST "/" {body :body} (model/create-deposit (json/read-str (slurp body))));  PUT and DELETE queries need id of deposit
+        (POST "/" {body :body} (model/create-deposit (json/read-str (slurp body))));  PUT and DELETE queries need id of deposit
 
-      (context "/:id" [id]
-        (defroutes document-routes; PUT query update deposit with selected id based on name and balance written in json raw data
+        (context "/:id" [id]
+          (defroutes document-routes; PUT query update deposit with selected id based on name and balance written in json raw data
             ; response is 1
             ;example of input raw json data to backend
               ; {
@@ -62,26 +88,25 @@
               ; }
 
 
-          (PUT "/" {body :body} (model/update-deposit (read-string id) (json/read-str (slurp body)))); delete query delete query with id. response is 1
+            (PUT "/" {body :body} (model/update-deposit (read-string id) (json/read-str (slurp body)))); delete query delete query with id. response is 1
 
 
-          (DELETE "/" [] (model/delete-deposit (read-string id)))))))
-  (context "/api/transactions" []
-    (defroutes transactions-routes
+            (DELETE "/" [] (model/delete-deposit (read-string id)))))))
+    (context "/api/transactions" []
+      (defroutes transactions-routes
 
            ;get query fetch result of all transactions
-      (POST "/" {body :body} (model/create-trans (json/read-str (slurp body))))))
+        (POST "/" {body :body} (model/create-trans (json/read-str (slurp body))))))
 
-  (ANY "/repl" {:as req}
-    (drawbridge req))
-  (GET "/" [] (slurp (io/resource "public/index.html")))
-  (route/resources "/")
-  (GET "*" [] (slurp (io/resource "public/index.html")))
-  (ANY "*" []
-    (route/not-found (slurp (io/resource "404.html")))))
+    (ANY "/repl" {:as req}
+      (drawbridge req))
+    (GET "/" [] (slurp (io/resource "public/index.html")))
+    (route/resources "/")
+    (GET "*" [] (slurp (io/resource "public/index.html")))
+    (ANY "*" []
+      (route/not-found (slurp (io/resource "404.html")))))
 
-(defroutes app-routes
-  )
+(defroutes app-routes)
 
 (defn wrap-log-request [handler]
   (fn [req]

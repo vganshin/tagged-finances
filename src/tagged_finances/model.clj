@@ -7,22 +7,38 @@
             [clj-time.format :as f]
             [clj-time.core :as t]))
 
-(def db {:dbtype "postgresql"
-         :dbname "agile_backend"
-         :host "localhost"
-         :port "5432"
-         :user "postgres"
-         :password ""})
+(def db {:connection-uri "jdbc:postgresql://localhost:5432/agile_backend?user=postgres"})
 
     ; getting the current date
 (defn now [] (new java.util.Date))
 
+(comment
+  (select-deposit)
+
+  (first (sql/insert! db :deposits {:name "wow" :balance 10.0}))
+
+  (create-deposit {:name "wow" :balance 10.0})
+
+  
+
+; (clojure.repl/doc sql/insert!)
+
+; (sql/insert! db :deposits {:name "hello" :balance 10.0M})
+
+; (sql/insert! db :deposits [:name :balance] ["hello" 10.0])
+)
+
 (defn select-deposit []
-  (sql/query db ["SELECT * FROM deposits "]))
+  (sql/query db ["select * from deposits"]))
+
+(defn get-deposit [id]
+  (let [result (sql/query db ["select * from deposits where id = ?" id])]
+    (if (empty? (rest result))
+      (first result))))
 
 (defn create-deposit [params]
-  (sql/insert! db :deposits {:name (let [name  (get params "name")] name)
-                             :balance (let [balance  (get params "balance")] balance)}))
+  (first (sql/insert! db :deposits {:name (let [name  (get params "name")] name)
+                             :balance (let [balance  (get params "balance")] balance)})))
 
 (defn update-deposit [id params]
   (sql/update! db :deposits {:name (let [name  (get params "name")] name)
