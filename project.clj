@@ -33,8 +33,7 @@
                    :subname "//localhost:5433/agile_backend?charSet=UTF8"
                    :user "admin"
                    :password ""}}
-  :ring {:handler agile_backend.handler/app
-         :init agile_backend.handler/init}
+  :main ^:skip-aot tagged-finances.web
   :uberjar-name "tagged-finances-standalone.jar"
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
