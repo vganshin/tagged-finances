@@ -10,7 +10,7 @@ import {formatDate} from '@angular/common';
 })
 export class BackendService {
 
-  GET_ALL_TRANSACTIONS = 'assets/transactions.json';
+  GET_ALL_TRANSACTIONS = 'api/transactions/';
   GET_ALL_DEPOSITS = 'api/deposits/';
   POST_TRANSACTION = 'api/transactions/';
   POST_DEPOSIT = 'api/deposits/';
@@ -87,7 +87,7 @@ export class BackendService {
    */
   postTransaction(transaction: Transaction) {
     const body = {
-      'date': formatDate(transaction.date, 'yyyy-mm-dd', 'EN'),
+      'date': formatDate(transaction.date, 'yyyy-MM-dd', 'EN'),
       'tags': transaction.tags.join(','),
       'deposit_id': transaction.deposit.id,
       'amount': transaction.amount
