@@ -37,6 +37,12 @@
       (session/wrap-session)
       (basic/wrap-basic-authentication authenticated?)))
 
+(defn as-date-string [date]
+    (f/unparse (f/formatter "dd MMM YYYY") date))
+       
+(defn date-aware-value-writer [key value] 
+    (if (= key :date) (as-date-string value) value))
+
 (defroutes deposits
   (GET "/" []
     {:body (json/write-str (model/select-deposit))
@@ -50,8 +56,13 @@
   (DELETE "/:id" [id :<< as-int] (model/delete-deposit id) {:status 204}))
 
 (defroutes transactions
-  (GET "/" [] "Hello transaction")
-  (POST "/" [] "post-post"))
+  (GET "/" []
+    {:body (json/write-str (model/select-transaction))
+     :headers {"Content-Type" "application/json;charset=utf-8"}})
+  (POST "/" {body :body}
+    {:body (json/write-str (model/create-transaction (json/read-str (slurp body))))
+     :headers {"Content-Type" "application/json;charset=utf-8"}})
+  )
 
 (defroutes api
   (context "/deposits" [] deposits)
@@ -74,7 +85,8 @@
               ;     "balance": 5.22
               ;   }
               ; }
-        (POST "/" {body :body} (model/create-deposit (json/read-str (slurp body))));  PUT and DELETE queries need id of deposit
+        (POST "/" {body :body} 
+          (model/create-deposit (json/read-str (slurp body))));  PUT and DELETE queries need id of deposit
 
         (context "/:id" [id]
           (defroutes document-routes; PUT query update deposit with selected id based on name and balance written in json raw data
