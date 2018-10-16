@@ -53,7 +53,7 @@ export class DepositListComponent implements OnInit {
   updateDeposit(depositRow: DepositRow) {
     depositRow.deposit.balance = depositRow.newBalance;
     depositRow.edit = false;
-    this.backendService.postDeposit(depositRow.deposit);
+    this.backendService.updateDeposit(depositRow.deposit);
   }
 
   saveNewDeposit() {
@@ -61,7 +61,7 @@ export class DepositListComponent implements OnInit {
 
     const deposit = new Deposit(controls.name.value, controls.balance.value);
     this.depositRows.push(new DepositRow(deposit));
-    this.backendService.postDeposit(deposit);
+    this.backendService.createDeposit(deposit);
 
     this.hideForm();
   }

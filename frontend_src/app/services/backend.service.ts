@@ -11,7 +11,7 @@ import {formatDate} from '@angular/common';
 export class BackendService {
 
   GET_ALL_TRANSACTIONS = 'assets/transactions.json';
-  GET_ALL_DEPOSITS = 'assets/deposits.json';
+  GET_ALL_DEPOSITS = 'api/deposits/';
   POST_TRANSACTION = 'api/transactions/';
   POST_DEPOSIT = 'api/deposits/';
 
@@ -57,14 +57,23 @@ export class BackendService {
     return this.http.get<Deposit[]>(this.GET_ALL_DEPOSITS);
   }
 
-  postDeposit(deposit: Deposit) {
+  createDeposit(deposit: Deposit) {
 
     const body = Object.assign(deposit);
-    delete body.id;
 
     console.log('post deposit');
     console.log(body);
     this.http.post(this.POST_DEPOSIT, body).subscribe();
+  }
+
+  updateDeposit(deposit: Deposit) {
+
+    const url = `api/deposits/${deposit.id}`;
+    const body = Object.assign(deposit);
+
+    console.log('post deposit');
+    console.log(body);
+    this.http.put(url, body).subscribe();
   }
 
   /*
