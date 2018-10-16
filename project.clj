@@ -1,4 +1,4 @@
-(defproject agile-backend "0.1.0-SNAPSHOT"
+(defproject tagged-finances "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://tagged-finances.herokuapp.com"
   :license {:name "MIT"}

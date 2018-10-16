@@ -1,6 +1,6 @@
-(ns agile-backend.core-test
+(ns tagged-finances.web-test
   (:require [clojure.test :refer :all]
-            [agile-backend.core :refer :all]))
+            [tagged-finances.web :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
