@@ -37,11 +37,15 @@
       (session/wrap-session)
       (basic/wrap-basic-authentication authenticated?)))
 
-(defn as-date-string [date]
-    (f/unparse (f/formatter "dd MMM YYYY") date))
-       
-(defn date-aware-value-writer [key value] 
-    (if (= key :date) (as-date-string value) value))
+(defn my-value-writer [key value]
+  (if (= key :creation_ts)
+    (str (java.sql.Date. (.getTime value)))
+    value))
+
+(defn my-value-reader [key value]
+      (if (= key :date)
+        (java.sql.Date/valueOf value)
+        value))
 
 (defroutes deposits
   (GET "/" []
@@ -57,12 +61,17 @@
 
 (defroutes transactions
   (GET "/" []
-    {:body (json/write-str (model/select-transaction))
+    {:body (json/write-str (model/select-transaction) :value-fn my-value-writer
+                           :key-fn name)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (POST "/" {body :body}
-    {:body (json/write-str (model/create-transaction (json/read-str (slurp body))))
+    {:body (json/write-str (model/create-transaction (json/read-str (slurp body))) :value-fn my-value-writer
+                           :key-fn name)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
-  )
+  (PUT "/:id" [id :<< as-int :as {body :body}]
+    {:body (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader :key-fn keyword))
+     :headers {"Content-Type" "application/json;charset=utf-8"}})
+  (DELETE "/:id" [id :<< as-int] (model/delete-transaction id) {:status 204}))
 
 (defroutes api
   (context "/deposits" [] deposits)
@@ -85,7 +94,7 @@
               ;     "balance": 5.22
               ;   }
               ; }
-        (POST "/" {body :body} 
+        (POST "/" {body :body}
           (model/create-deposit (json/read-str (slurp body))));  PUT and DELETE queries need id of deposit
 
         (context "/:id" [id]
