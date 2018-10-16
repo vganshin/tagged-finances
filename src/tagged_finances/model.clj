@@ -48,11 +48,6 @@
                 :creation_ts (let [creation_ts  (get params "date")]  (c/to-sql-date creation_ts))
                 :tags (let [tags  (get params "tags")] tags)}
                ["id = ?" id]))
-(sql/update! db :transactions {:deposit_id 2} ["id=?" 14])
-(update-transaction 14  {"date" "2018-10-12"
-                         "tags" "tag1,tag2,tag3,tag4"
-                         "deposit_id" 1
-                         "amount" 40})
 
 (defn select-transaction []
   (sql/query db ["select * from transactions"]))
