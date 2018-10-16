@@ -26,7 +26,7 @@
     value))
 
 (defn my-value-reader [key value]
-  (if (= key :date)
+  (if (= key "date")
     (java.sql.Date/valueOf value)
     value))
 
@@ -52,7 +52,7 @@
                            :key-fn name)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (PUT "/:id" [id :<< as-int :as {body :body}]
-    {:body (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader :key-fn keyword))
+    {:body (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader))
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (DELETE "/:id" [id :<< as-int] (model/delete-transaction id) {:status 204}))
 
