@@ -1,25 +1,25 @@
-(ns tagged-finances.web
-  (:require
-   [migratus.core :as migratus]
-   [compojure.core :refer [defroutes GET PUT POST DELETE ANY]]
-   [compojure.handler :refer [site]]
-   [compojure.core :refer :all]
-   [compojure.handler :as handler]
-   [compojure.route :as route]
-   [compojure.coercions :refer [as-int]]
-   [clojure.java.io :as io]
-   [ring.middleware.stacktrace :as trace]
-   [ring.middleware.session :as session]
-   [ring.middleware.session.cookie :as cookie]
-   [ring.adapter.jetty :as jetty]
-   [ring.middleware.basic-authentication :as basic]
-   [cemerick.drawbridge :as drawbridge]
-   [ring.util.response :refer [response]]
-   [ring.middleware.json :as middleware]
-   [clojure.data.json :as json]
-   [environ.core :refer [env]]
-   [tagged-finances.model :as model]))
-
+ 
+  (ns tagged-finances.web
+    (:require
+     [migratus.core :as migratus]
+     [compojure.core :refer [defroutes GET PUT POST DELETE ANY]]
+     [compojure.handler :refer [site]]
+     [compojure.core :refer :all]
+     [compojure.handler :as handler]
+     [compojure.route :as route]
+     [compojure.coercions :refer [as-int]]
+     [clojure.java.io :as io]
+     [ring.middleware.stacktrace :as trace]
+     [ring.middleware.session :as session]
+     [ring.middleware.session.cookie :as cookie]
+     [ring.adapter.jetty :as jetty]
+     [ring.middleware.basic-authentication :as basic]
+     [cemerick.drawbridge :as drawbridge]
+     [ring.util.response :refer [response]]
+     [ring.middleware.json :as middleware]
+     [clojure.data.json :as json]
+     [environ.core :refer [env]]
+     [tagged-finances.model :as model]))
 
 (defn my-value-writer [key value]
   (if (= key :creation_ts)
@@ -39,40 +39,25 @@
     {:body (json/write-str (model/create-deposit (json/read-str (slurp body))))
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (PUT "/:id" [id :<< as-int :as {body :body}]
-    {
-      ; :body (if (= 1 (model/update-deposit id (json/read-str (slurp body))) )
-      ;  {(json/write-str(4))} (json/write-str(2)))
-      :body (json/write-str (model/update-deposit id (json/read-str (slurp body))))
+    {:body (if (= 1 (model/update-deposit id (json/read-str (slurp body))))
+             (json/write-str (model/get-deposit id)) {:status 406})
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (DELETE "/:id" [id :<< as-int] (model/delete-deposit id) {:status 204}))
 
 (defroutes transactions
   (GET "/" []
-    {:body (json/write-str (model/select-transaction) :value-fn my-value-writer :key-fn name)
+    {:body (json/write-str (model/select-transaction) :value-fn my-value-writer
+                           :key-fn name)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (POST "/" {body :body}
     {:body (json/write-str (model/create-transaction (json/read-str (slurp body))) :value-fn my-value-writer
                            :key-fn name)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
-<<<<<<< HEAD
-     (PUT "/:id" [id :<< as-int :as {body :body}]
-    ; {:body }
-    ;  {:body (str (type(first(model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)) )))
-      {:body (if (= 1 (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)) )
-      (json/write-str(model/select-transaction-by-id id) :value-fn my-value-writer :key-fn name) 
-        {:status 406})
-       :headers {"Content-Type" "application/json;charset=utf-8"}})
-  ; (PUT "/:id" [id :<< as-int :as {body :body}]
-  ; { 
-  ;   :body (if (= 1 (str(model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader :key-fn keyword)) ))
-  ;      (str 4) (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)))
-  ;   ; {:body (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader :key-fn keyword))
-  ;    :headers {"Content-Type" "application/json;charset=utf-8"}})
-=======
   (PUT "/:id" [id :<< as-int :as {body :body}]
-    {:body (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader))
+    {:body (if (= 1 (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)))
+             (json/write-str (model/get-transaction id) :value-fn my-value-writer
+                             :key-fn name) {:status 406})
      :headers {"Content-Type" "application/json;charset=utf-8"}})
->>>>>>> origin/master
   (DELETE "/:id" [id :<< as-int] (model/delete-transaction id) {:status 204}))
 
 (defroutes api
@@ -93,7 +78,7 @@
             :body (slurp (io/resource "500.html"))}))))
 
 (defn wrap-app [app]
-  ;; TODO: heroku config:add SESSION_SECRET=$RANDOM_16_CHARS
+    ;; TODO: heroku config:add SESSION_SECRET=$RANDOM_16_CHARS
   (let [store (cookie/cookie-store {:key (env :session-secret)})]
     (-> app
         ((if (env :production)
