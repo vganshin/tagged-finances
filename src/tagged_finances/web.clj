@@ -37,15 +37,16 @@
       (session/wrap-session)
       (basic/wrap-basic-authentication authenticated?)))
 
+
 (defn my-value-writer [key value]
   (if (= key :creation_ts)
     (str (java.sql.Date. (.getTime value)))
     value))
 
 (defn my-value-reader [key value]
-      (if (= key :date)
-        (java.sql.Date/valueOf value)
-        value))
+  (if (= key "date")
+    (java.sql.Date/valueOf value)
+    value))
 
 (defroutes deposits
   (GET "/" []
@@ -55,22 +56,34 @@
     {:body (json/write-str (model/create-deposit (json/read-str (slurp body))))
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (PUT "/:id" [id :<< as-int :as {body :body}]
-    {:body (model/update-deposit id (json/read-str (slurp body)))
+    {
+      ; :body (if (= 1 (model/update-deposit id (json/read-str (slurp body))) )
+      ;  {(json/write-str(4))} (json/write-str(2)))
+      :body (json/write-str (model/update-deposit id (json/read-str (slurp body))))
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (DELETE "/:id" [id :<< as-int] (model/delete-deposit id) {:status 204}))
 
 (defroutes transactions
   (GET "/" []
-    {:body (json/write-str (model/select-transaction) :value-fn my-value-writer
-                           :key-fn name)
+    {:body (json/write-str (model/select-transaction) :value-fn my-value-writer :key-fn name)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (POST "/" {body :body}
     {:body (json/write-str (model/create-transaction (json/read-str (slurp body))) :value-fn my-value-writer
                            :key-fn name)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
-  (PUT "/:id" [id :<< as-int :as {body :body}]
-    {:body (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader :key-fn keyword))
-     :headers {"Content-Type" "application/json;charset=utf-8"}})
+     (PUT "/:id" [id :<< as-int :as {body :body}]
+    ; {:body }
+    ;  {:body (str (type(first(model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)) )))
+      {:body (if (= 1 (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)) )
+      (json/write-str(model/select-transaction-by-id id) :value-fn my-value-writer :key-fn name) 
+        {:status 406})
+       :headers {"Content-Type" "application/json;charset=utf-8"}})
+  ; (PUT "/:id" [id :<< as-int :as {body :body}]
+  ; { 
+  ;   :body (if (= 1 (str(model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader :key-fn keyword)) ))
+  ;      (str 4) (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)))
+  ;   ; {:body (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader :key-fn keyword))
+  ;    :headers {"Content-Type" "application/json;charset=utf-8"}})
   (DELETE "/:id" [id :<< as-int] (model/delete-transaction id) {:status 204}))
 
 (defroutes api
