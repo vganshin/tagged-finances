@@ -53,13 +53,16 @@ export class TransactionListComponent implements OnInit {
   }
 
   onSubmit() {
-    this.transactions.push(
-      {
-        'id': 123,
-        'depositName': this.newTransactionForm.controls.deposit.value.name,
-        'tags': this.newTransactionForm.controls.tags.value.split(','),
-        'amount': this.newTransactionForm.controls.amount.value
-      });
+
+    const newTransaction = new Transaction();
+    newTransaction.date = new Date();
+    newTransaction.tags = this.newTransactionForm.controls.tags.value.split(',');
+    newTransaction.deposit = this.newTransactionForm.controls.deposit.value;
+    newTransaction.amount = this.newTransactionForm.controls.amount.value;
+
+
+    this.backendService.postTransaction(newTransaction);
+    this.transactions.push(newTransaction);
 
     this.hideForm();
   }

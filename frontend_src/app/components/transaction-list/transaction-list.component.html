@@ -11,7 +11,7 @@
   <tbody *ngFor="let transaction of transactions | filterByDeposit:forDeposit; index as i;">
   <tr>
     <th scope="row">{{i}}</th>
-    <td>{{transaction.depositName}}</td>
+    <td>{{transaction.deposit.name}}</td>
     <td>{{transaction.tags}}</td>
     <td>{{transaction.amount}}</td>
   </tr>

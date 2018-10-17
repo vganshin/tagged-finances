@@ -18,9 +18,9 @@
       </span>
 
       <div  *ngSwitchCase=true class="input-group">
-        <input (change)="depositRow.newBalance = $event.target.value;"
+        <input (change)="depositRow.newBalance = $event.target.valueAsNumber;"
                value={{depositRow.getBalance()}}
-               type="text" class="form-control">
+               type="number" class="form-control">
         <div class="input-group-append">
           <button (click)="updateDeposit(depositRow); $event.stopPropagation();"
                   class="btn btn-outline-success" type="button">Save</button>

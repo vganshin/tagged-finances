@@ -47,8 +47,12 @@
                 :amount (let [amount  (get params "amount")] amount)
                 :creation_ts (let [creation_ts  (get params "date")]  (c/to-sql-date creation_ts))
                 :tags (let [tags  (get params "tags")] tags)}
+<<<<<<< HEAD
                ["id = ?" id] )))
 
+=======
+               ["id = ?" id]))
+>>>>>>> origin/master
 
 (defn select-transaction []
   (sql/query db ["select * from transactions"]))
