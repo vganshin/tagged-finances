@@ -8,7 +8,7 @@
             [clj-time.format :as f]
             [clj-time.core :as t]))
 
-(def db {:connection-uri (or (env :jdbc-database-url) "jdbc:postgresql://localhost:5434/agile_backend?user=postgres&password=pass")})
+(def db {:connection-uri (or (env :jdbc-database-url) "jdbc:postgresql://localhost:5432/agile_backend?user=postgres&password=postgres")})
 
 (defn select-deposit []
   (sql/query db ["select * from deposits"]))
