@@ -8,8 +8,8 @@
             [clj-time.format :as f]
             [clj-time.core :as t]))
 
-; (def db {:connection-uri (or (env :jdbc-database-url) "jdbc:postgresql://localhost:5432/agile_backend?user=postgres")})
-(def db {:connection-uri (or (env :jdbc-database-url) "jdbc:postgresql://localhost:5434/agile_backend?user=admin&password=pass")})
+(def db {:connection-uri (or (env :jdbc-database-url) "jdbc:postgresql://localhost:5432/agile_backend?user=postgres")})
+
     ; getting the current date
 (defn now [] (new java.util.Date))
 
