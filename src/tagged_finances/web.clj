@@ -1,25 +1,24 @@
- 
-  (ns tagged-finances.web
-    (:require
-     [migratus.core :as migratus]
-     [compojure.core :refer [defroutes GET PUT POST DELETE ANY]]
-     [compojure.handler :refer [site]]
-     [compojure.core :refer :all]
-     [compojure.handler :as handler]
-     [compojure.route :as route]
-     [compojure.coercions :refer [as-int]]
-     [clojure.java.io :as io]
-     [ring.middleware.stacktrace :as trace]
-     [ring.middleware.session :as session]
-     [ring.middleware.session.cookie :as cookie]
-     [ring.adapter.jetty :as jetty]
-     [ring.middleware.basic-authentication :as basic]
-     [cemerick.drawbridge :as drawbridge]
-     [ring.util.response :refer [response]]
-     [ring.middleware.json :as middleware]
-     [clojure.data.json :as json]
-     [environ.core :refer [env]]
-     [tagged-finances.model :as model]))
+ (ns tagged-finances.web
+  (:require
+    [migratus.core :as migratus]
+    [compojure.core :refer [defroutes GET PUT POST DELETE ANY]]
+    [compojure.handler :refer [site]]
+    [compojure.core :refer :all]
+    [compojure.handler :as handler]
+    [compojure.route :as route]
+    [compojure.coercions :refer [as-int]]
+    [clojure.java.io :as io]
+    [ring.middleware.stacktrace :as trace]
+    [ring.middleware.session :as session]
+    [ring.middleware.session.cookie :as cookie]
+    [ring.adapter.jetty :as jetty]
+    [ring.middleware.basic-authentication :as basic]
+    [cemerick.drawbridge :as drawbridge]
+    [ring.util.response :refer [response]]
+    [ring.middleware.json :as middleware]
+    [clojure.data.json :as json]
+    [environ.core :refer [env]]
+    [tagged-finances.model :as model]))
 
 (defn my-value-writer [key value]
   (if (= key :creation_ts)
