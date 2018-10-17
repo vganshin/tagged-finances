@@ -15,7 +15,7 @@
 
 
 (defn select-deposit []
-  (first (sql/query db ["select * from deposits"])))
+  (sql/query db ["select * from deposits"]))
 
 (defn get-deposit [id]
   (let [result (sql/query db ["select * from deposits where id = ?" id])]
