@@ -26,6 +26,8 @@ export class TransactionListComponent implements OnInit {
 
     this.setupForm();
 
+    this.backendService.getDeposits()
+      .subscribe((deposits: Deposit[]) => this.deposits = deposits);
     this.backendService.getTransactions()
       .subscribe((transactions: Transaction[]) => this.transactions = transactions);
 
