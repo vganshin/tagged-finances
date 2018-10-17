@@ -38,9 +38,9 @@
   (POST "/" {body :body}
     {:body (json/write-str (model/create-deposit (json/read-str (slurp body))))
      :headers {"Content-Type" "application/json;charset=utf-8"}})
-     (PUT "/:id" [id :<< as-int :as {body :body}]
-      {:body (model/update-deposit id (json/read-str (slurp body)))
-       :headers {"Content-Type" "application/json;charset=utf-8"}})
+  (PUT "/:id" [id :<< as-int :as {body :body}]
+    {:body (json/write-str (model/update-deposit id (json/read-str (slurp body))))
+     :headers {"Content-Type" "application/json;charset=utf-8"}})
   (DELETE "/:id" [id :<< as-int] (model/delete-deposit id) {:status 204}))
 
 (defroutes transactions
@@ -52,9 +52,9 @@
     {:body (json/write-str (model/create-transaction (json/read-str (slurp body))) :value-fn my-value-writer
                            :key-fn name)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
-     (PUT "/:id" [id :<< as-int :as {body :body}]
-      {:body (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader))
-       :headers {"Content-Type" "application/json;charset=utf-8"}})
+  (PUT "/:id" [id :<< as-int :as {body :body}]
+    {:body (json/write-str (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)):value-fn my-value-writer) 
+     :headers {"Content-Type" "application/json;charset=utf-8"}})
   (DELETE "/:id" [id :<< as-int] (model/delete-transaction id) {:status 204}))
 
 (defroutes api
@@ -99,3 +99,5 @@
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
     (start {:port port})))
+
+  
