@@ -53,7 +53,7 @@
                            :key-fn name)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (PUT "/:id" [id :<< as-int :as {body :body}]
-    {:body (json/write-str (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)):value-fn my-value-writer) 
+    {:body (json/write-str (model/update-transaction id (json/read-str (slurp body) :value-fn my-value-reader)) :value-fn my-value-writer)
      :headers {"Content-Type" "application/json;charset=utf-8"}})
   (DELETE "/:id" [id :<< as-int] (model/delete-transaction id) {:status 204}))
 
@@ -99,5 +99,3 @@
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
     (start {:port port})))
-
-  
