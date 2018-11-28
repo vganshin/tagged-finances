@@ -1,0 +1,51 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <style type="text/css">
+    body {
+      text-align: center;
+    }
+    .answer {
+      font-size: 2em;
+    }
+  </style>
+</head>
+<body>
+  <form>
+    <input id="product-name-input" placeholder="яблоко" />
+    <button id="find-star-button">Найти</button>
+  </form>
+  
+  <div class="answer">
+    <div id="answer-product-name">Яблоко</div>
+    <div id="answer-stars">***</div>
+  </div>
+
+  <script type="text/javascript">
+    const productNameInput = document.getElementById('product-name-input');
+    const findStarButton = document.getElementById('find-star-button');
+    const answerProductName = document.getElementById('answer-product-name');
+    const answerStars = document.getElementById('answer-stars');
+
+    const data = {
+      "яблоко": "*****",
+      "сок": "***"
+    };
+
+    findStarButton.onclick = e => {
+      e.preventDefault();
+
+      const productName = productNameInput.value.toLowerCase();
+      const stars = data[productName];
+
+      if (stars === undefined) {
+        answerProductName.textContent = "Не нашлось. :("
+        answerStars.textContent = "";
+      } else {
+        answerProductName.textContent = productName;
+        answerStars.textContent = stars;
+      };
+    };
+
+  </script>
+</body>
